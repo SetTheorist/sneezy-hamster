@@ -1,15 +1,10 @@
-//use std::collections::{HashSet};
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
-//use std::ops::{Add,Mul};
 
 extern crate crypto;
 use crypto::digest::Digest;
 use crypto::md5::Md5;
-
-//extern crate regex;
-//use regex::Regex;
 
 fn main() {
     let args : Vec<_> = env::args().collect();
@@ -47,12 +42,16 @@ fn main() {
             m.input_str(&salt.to_string());
             let h = m.result_str();
             if &h[0..5] == "00000" {
-                let pos = 
-                print!("{}", &h[5..6]);
-                n += 1;
-                if n>=8 { break; }
+                let b : Vec<u8> = h.bytes().collect();
+                let pos = (b[5] - ('0' as u8)) as usize;
+                let v = b[6];
+                if pos<8 && res[pos]=='-' {
+                    res[pos] = v as char;
+                    n += 1;
+                    if n>=8 { break; }
+                }
             }
         }
-        println!("");
+        println!("{}", res.iter().cloned().collect::<String>());
     }
 }
